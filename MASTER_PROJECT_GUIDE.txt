@@ -1,0 +1,68 @@
+# MASTER PROMPT – FieldTrackerApp
+
+You are building a Windows desktop app in Python 3.10+. The user is NOT a programmer: keep everything simple, explain in plain German, and never leave the app in a broken state.
+
+## GOAL
+Live camera feed -> detect sports field by color isolation (HSV) -> homography -> track up to 4 players with YOLO -> show them as little "beans" on a rotatable 3D mini model of the field (lines only, can also be viewed from above).
+
+## STACK (fixed)
+Python 3.10+, PyQt6 (dark stylesheet, modern look), opencv-python, numpy, PyQt6 QOpenGLWidget + PyOpenGL, ultralytics (YOLOv8n = smallest model, for speed).
+
+## UI LAYOUT
+Top row, 3 panels side by side:
+1. Live camera view (with detected field outline drawn on top)
+2. Color isolation view (white = field, black = rest) + HSV sliders (H/S/V min and max) + "Auto-detect field color" button
+3. 3D mini model of the field (OpenGL): field lines only, players as small colored beans (capsules/spheres). Mouse: left-drag = rotate, wheel = zoom. Buttons: Zoom +, Zoom -, "Top view", "Reset view".
+Bottom row: camera image with YOLO boxes + ID per player (max 4).
+Bottom status bar: FPS, camera status, number of tracked players.
+Camera source dropdown: webcam index OR video file (for testing without camera).
+
+## FOLDER STRUCTURE
+FieldTrackerApp/
+├── START.bat
+├── PROGRESS.md
+├── requirements.txt
+├── main.py
+└── modules/
+    ├── __init__.py
+    ├── video_processor.py   (camera/video capture in its own QThread)
+    ├── field_tracker.py     (HSV mask, field contour, homography)
+    ├── renderer_3d.py       (QOpenGLWidget, field lines, beans, mouse control)
+    └── yolo_tracker.py      (YOLOv8n, person detection, max 4, simple ID tracking)
+
+## START.bat (VERY IMPORTANT – user must start the app by double-click)
+- Checks if Python is installed; if not, shows a clear message with the download link and pauses.
+- On first run: creates a `.venv`, installs requirements.txt.
+- Then starts main.py with the venv (use pythonw so no black console stays open, but keep a "START_DEBUG.bat" with console for error messages).
+- Must work from any location (use %~dp0).
+- At the end, also create a script `create_shortcut.vbs` or .ps1 that puts a desktop shortcut with an icon.
+
+## PROGRESS TRACKING (MANDATORY RULE)
+Maintain PROGRESS.md in the project root at ALL times.
+- Before starting a task: mark it [~].
+- When finished AND tested: mark it [x].
+- Below the checklist keep a section "## Log" with one short line per finished task (date + what was done + how to test it) and a section "## Known problems".
+- Update PROGRESS.md BEFORE and AFTER every task, never skip it.
+
+Initial checklist:
+- [ ] Task 1: Folder structure, requirements.txt, START.bat + START_DEBUG.bat
+- [ ] Task 2: main.py with PyQt6 dark GUI shell (all panels as placeholders)
+- [ ] Task 3: video_processor.py (webcam + video file, threaded, shown in panel 1)
+- [ ] Task 4: field_tracker.py – HSV color isolation + sliders + auto-detect (panel 2)
+- [ ] Task 5: renderer_3d.py – OpenGL viewport, field lines, mouse rotate/zoom, buttons
+- [ ] Task 6: Homography (4 field corners -> flat field coordinates), field outline in panel 1
+- [ ] Task 7: yolo_tracker.py – player detection, max 4, IDs, boxes in bottom panel
+- [ ] Task 8: Player feet position -> homography -> beans in 3D model
+- [ ] Task 9: Polish – FPS display, save/load settings (settings.json), error messages in German, desktop shortcut
+- [ ] Task 10: Final test on a video file + README.txt (3 lines: how to start)
+
+## WORKING RULES
+1. Work on ONE task at a time. After each task: tell me in 2-3 German sentences what to click to test it, then STOP and wait for my "weiter".
+2. The app must start and run after every task (placeholders are fine).
+3. Never block the GUI thread: video and YOLO run in worker threads, communicate via Qt signals.
+4. Keep code simple and commented in English; no over-engineering, no extra libraries beyond the stack.
+5. If something fails (camera not found, no GPU, YOLO model download), show a friendly German message instead of crashing. Use GPU if available, otherwise CPU.
+6. If a requirement is unclear, ask ONE short question instead of guessing.
+
+## START NOW
+Create PROGRESS.md, then do Task 1 and Task 2 only. Then stop and wait.
