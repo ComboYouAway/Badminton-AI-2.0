@@ -6,3 +6,11 @@ Starte Claude Code im Auto Mode und schreib: Lies MASTER_PROMPT.md komplett und 
 
 
 Danach, wenn Phase A passt, kannst du pro Phase ein Ziel setzen, zum Beispiel: /goal Phase B in PROGRESS.md ist komplett [x] und python main.py --selftest endet mit Exit-Code 0.
+
+
+
+ZUM HOCHLADEN: 
+
+git add -A
+git commit -m "KOMMENTAR"
+git push
